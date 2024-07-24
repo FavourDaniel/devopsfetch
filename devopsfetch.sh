@@ -208,38 +208,47 @@ display_users() {
 }
 
 parse_time_range() {
-    local time_arg=$1
-    log_activity "Parsing time range: $time_arg"
+    local start_arg=$1
+    local end_arg=$2
     local current_time=$(date +%s)
     local start_time
-    local end_time=$current_time
+    local end_time
 
-    case $time_arg in
-        *m|*minute*) 
-            start_time=$((current_time - ${time_arg//[!0-9]/} * 60))
-            ;;
-        *h|*hour*)
-            start_time=$((current_time - ${time_arg//[!0-9]/} * 3600))
-            ;;
-        *d|*day*)
-            start_time=$((current_time - ${time_arg//[!0-9]/} * 86400))
-            ;;
-        [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9])
-            start_time=$(date -d "$time_arg" +%s)
-            end_time=$((start_time + 86400))
-            ;;
-        [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]" "[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9])
-            start_time=$(date -d "${time_arg% *}" +%s)
-            end_time=$(date -d "${time_arg#* }" +%s)
-            ;;
-        *)
-            echo "Invalid time range format. Use -h for help."
+    if [ -n "$end_arg" ]; then
+        # Two dates provided
+        start_time=$(date -d "$start_arg" +%s 2>/dev/null)
+        end_time=$(date -d "$end_arg" +%s 2>/dev/null)
+        if [ $? -ne 0 ]; then
+            echo "Invalid date format. Use YYYY-MM-DD."
             exit 1
-            ;;
-    esac
+        fi
+    else
+        # One argument provided
+        case $start_arg in
+            *m|*minute*) 
+                start_time=$((current_time - ${start_arg//[!0-9]/} * 60))
+                ;;
+            *h|*hour*)
+                start_time=$((current_time - ${start_arg//[!0-9]/} * 3600))
+                ;;
+            *d|*day*)
+                start_time=$((current_time - ${start_arg//[!0-9]/} * 86400))
+                ;;
+            [0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9])
+                start_time=$(date -d "$start_arg" +%s)
+                end_time=$((start_time + 86400))
+                ;;
+            *)
+                echo "Invalid time range format. Use -h for help."
+                exit 1
+                ;;
+        esac
+        end_time=$current_time
+    fi
 
     echo "$start_time $end_time"
 }
+
 
 display_activities() {
     local start_time=$1
@@ -307,14 +316,20 @@ while [[ $# -gt 0 ]]; do
         -t|--time)
             log_activity "Time range option selected"
             if [ -n "$2" ]; then
-                log_activity "Parsing time range: $2"
-                time_range=$(parse_time_range "$2")
+                if [ -n "$3" ] && [[ $3 =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+                    log_activity "Parsing time range: $2 to $3"
+                    time_range=$(parse_time_range "$2" "$3")
+                    shift 3
+                else
+                    log_activity "Parsing time range: $2"
+                    time_range=$(parse_time_range "$2")
+                    shift 2
+                fi
                 start_time=$(date -d @${time_range% *} +'%Y-%m-%d %H:%M:%S')
                 end_time=$(date -d @${time_range#* } +'%Y-%m-%d %H:%M:%S')
                 log_activity "Displaying activities from $start_time to $end_time"
                 echo "Displaying activities from $start_time to $end_time"
                 display_activities "$start_time" "$end_time"
-                shift 2
             else
                 log_activity "Error: Time range argument is missing."
                 echo "Error: Time range argument is missing."

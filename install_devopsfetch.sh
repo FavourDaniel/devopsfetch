@@ -55,6 +55,9 @@ cat << EOF > /etc/logrotate.d/devopsfetch
     missingok
     notifempty
     create 644 root root
+    postrotate
+        systemctl reload devopsfetch.service > dev/null 2> /dev/null || true
+    endscript
 }
 EOF
 
