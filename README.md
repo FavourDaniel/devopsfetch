@@ -1,7 +1,11 @@
 # DevopsFetch
 
-## How to Install the DevOpsFetch Program
-- Clone the Repository
+Devopsfetch is a command line too that collects and displays system information, including active ports, user logins, Nginx configurations, Docker images, and container statuses.
+
+## Installation
+Follow the below steps to setup Devopsfetch on your machine.
+
+1.  Clone the Repository
 ```
 git clone https://github.com/FavourDaniel/devopsfetch.git
 ```
