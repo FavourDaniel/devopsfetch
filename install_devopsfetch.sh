@@ -32,7 +32,7 @@ Description=DevOpsFetch Continuous Monitoring
 After=network.target
 
 [Service]
-ExecStart=/usr/local/bin/devopsfetch -t 1m
+ExecStart=/usr/local/bin/devopsfetch -t now now
 Restart=always
 User=root
 
