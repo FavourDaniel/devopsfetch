@@ -1,6 +1,6 @@
 # DevopsFetch
 
-Devopsfetch is a command line too that collects and displays system information, including active ports, user logins, Nginx configurations, Docker images, and container statuses.
+Devopsfetch is a command line tool that collects and displays system information, including active ports, user logins, Nginx configurations, Docker images, and container statuses.
 
 ## Features
 - Ports: DevOpsfetch displays all active ports and associated services. It also provides detailed information about specific ports.
