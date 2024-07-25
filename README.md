@@ -138,7 +138,7 @@ cat /var/log/devopsfetch.log
 ```
 or 
 ```
-tail -<number-of-logs-lines> /var/log/devopsfetch.log
+tail -f /var/log/devopsfetch.log
 ```
 
 ## Continuous Monitoring
@@ -147,7 +147,7 @@ DevopsFetch can run as a service for continuous monitoring:
 
 - Start the service
 ```
-`sudo systemctl start devopsfetch.service
+sudo systemctl start devopsfetch.service
 ```
 - Stop the service
 ```
